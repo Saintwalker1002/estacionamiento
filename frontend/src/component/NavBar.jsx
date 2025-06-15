@@ -22,6 +22,9 @@ function NavBar() {
           Home
         </Link>
         <Link to="/Reserva" className="bg-red-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md transition">Reservas</Link>
+        <Link to="/cancelar" className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-md transition">
+          Cancelar Reserva 
+        </Link>
       </div>
     </nav>
   );

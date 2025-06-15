@@ -1,16 +1,12 @@
 import React, { useState } from 'react';
 import Header from '../component/NavBar';
+import { useReserva } from '../context/ReservaContext';
 
 const totalEspacios = 12;
 
 const Reserva = () => {
   // Estado de los espacios de estacionamiento.
-  const [espacios, setEspacios] = useState(
-    Array.from({ length: totalEspacios }, (_, i) => ({
-      id: i + 1,
-      status: 'disponible', // Puede ser 'disponible', 'reservado' u 'ocupado'
-    }))
-  );
+  const { espacios, reservarEspacio } = useReserva();
 
   // Estado para mostrar un mensaje cuando se reserva
   const [mensaje, setMensaje] = useState('');
@@ -55,14 +51,10 @@ const Reserva = () => {
     // Limpiar mensaje de error si todo está bien
     setErrorTiempo('');
 
-    // Actualizar estado de reserva
-    setEspacios(prev =>
-      prev.map(esp =>
-        esp.id === espacioSeleccionado
-          ? { ...esp, status: 'reservado' }
-          : esp
-      )
-    );
+    reservarEspacio(espacioSeleccionado, {
+      birthdate, horas, patente, rut
+    });
+
     setMensaje(`Has reservado el espacio #${espacioSeleccionado}`);
     cerrarModal();
   };
@@ -221,7 +213,7 @@ const Reserva = () => {
                   />
                 </div>
               </div>
-              
+
               <div className="flex justify-between mt-4">
                 <button
                   type="button"
