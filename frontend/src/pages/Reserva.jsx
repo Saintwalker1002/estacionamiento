@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import HeaderLog from '../component/NavBar';
+import Header from '../component/NavBar';
 
 const totalEspacios = 12;
 
@@ -20,8 +20,9 @@ const Reserva = () => {
   const [espacioSeleccionado, setEspacioSeleccionado] = useState(null);
   const [birthdate, setBirthdate] = useState('');
   const [horas, setHoras] = useState('');
-  const [patente, setPatente] = useState('');
-  const [rut, setRut] = useState('');
+  const [errorTiempo, setErrorTiempo] = useState('');
+  const [patente, setPatente] = useState({ parte1: '', parte2: '', parte3: '' });
+  const [rut, setRut] = useState({ cuerpo: '', dv: '' });
 
   // Función para abrir el modal y establecer el espacio a reservar
   const abrirModal = (id) => {
@@ -41,9 +42,20 @@ const Reserva = () => {
   // Función para reservar (al enviar el formulario)
   const manejarReserva = (e) => {
     e.preventDefault();
-    // Aquí puedes agregar validaciones adicionales o llamar a un API.
 
-    // Actualiza el estado del espacio a "reservado"
+    // Validar si la fecha y hora están en el pasado
+    const fechaHoraSeleccionada = new Date(`${birthdate}T${horas}`);
+    const fechaHoraActual = new Date();
+
+    if (fechaHoraSeleccionada <= fechaHoraActual) {
+      setErrorTiempo('No puedes reservar una fecha y hora pasada.');
+      return;
+    }
+
+    // Limpiar mensaje de error si todo está bien
+    setErrorTiempo('');
+
+    // Actualizar estado de reserva
     setEspacios(prev =>
       prev.map(esp =>
         esp.id === espacioSeleccionado
@@ -54,6 +66,7 @@ const Reserva = () => {
     setMensaje(`Has reservado el espacio #${espacioSeleccionado}`);
     cerrarModal();
   };
+
 
   // Función para definir el color del recuadro según el estado
   const getColor = (status) => {
@@ -68,7 +81,7 @@ const Reserva = () => {
   return (
   <div className="min-h-screen bg-blue-100">
     <header className="relative z-20">
-      <HeaderLog />
+      <Header />
     </header>
 
     {/* Wrapper para centrar el contenido */}
@@ -113,38 +126,102 @@ const Reserva = () => {
           <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-md">
             <h2 className="text-2xl font-bold mb-4 text-blue-800 text-center">Reservar Espacio #{espacioSeleccionado}</h2>
             <form onSubmit={manejarReserva} className="grid gap-4">
-              <input
-                type="date"
-                className="p-3 border rounded"
-                value={birthdate}
-                onChange={(e) => setBirthdate(e.target.value)}
-                required
-              />
-              <input
-                type="time"
-                placeholder="Horas a ocupar (ej. 9:00-12:00)"
-                className="p-3 border rounded"
-                value={horas}
-                onChange={(e) => setHoras(e.target.value)}
-                required
-              />
-              <input
-                type="text"
-                placeholder="Patente del auto"
-                className="p-3 border rounded"
-                value={patente}
-                onChange={(e) => setPatente(e.target.value)}
-                required
-              />
-              <input
-                type="text"
-                placeholder="RUT"
-                className="p-3 border rounded"
-                value={rut}
-                onChange={(e) => setRut(e.target.value)}
-                required
-              />
 
+              <div className="flex flex-col">
+                <label className="text-sm font-semibold text-gray-700 mb-1">Fecha de reserva</label>
+                <input
+                  type="date"
+                  className="p-3 border border-black rounded"
+                  min={new Date().toISOString().split("T")[0]} // bloquea días anteriores
+                  value={birthdate}
+                  onChange={(e) => setBirthdate(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="flex flex-col">
+                <label className="text-sm font-semibold text-gray-700 mb-1">Hora</label>
+                <input
+                  type="time"
+                  className="p-3 border border-black rounded"
+                  value={horas}
+                  onChange={(e) => setHoras(e.target.value)}
+                  required
+                />
+                {errorTiempo && <p className="text-red-600 text-sm">{errorTiempo}</p>}
+              </div>
+
+              <div className="flex flex-col">
+                <label className="text-sm font-semibold text-gray-700 mb-2">Patente</label>
+                <div className="grid grid-cols-3 gap-2">
+                  <div className="flex flex-col">
+                    <label className="text-xs text-gray-600 mb-1">Parte 1</label>
+                    <input
+                      type="text"
+                      maxLength={3}
+                      className="p-3 border border-black rounded text-center uppercase"
+                      placeholder="AB"
+                      value={patente.parte1 || ''}
+                      onChange={(e) => setPatente({ ...patente, parte1: e.target.value.toUpperCase() })}
+                      required
+                    />
+                  </div>
+                  <div className="flex flex-col">
+                    <label className="text-xs text-gray-600 mb-1">Parte 2</label>
+                    <input
+                      type="text"
+                      maxLength={3}
+                      className="p-3 border border-black rounded text-center uppercase"
+                      placeholder="CD"
+                      value={patente.parte2 || ''}
+                      onChange={(e) => setPatente({ ...patente, parte2: e.target.value.toUpperCase() })}
+                      required
+                    />
+                  </div>
+                  <div className="flex flex-col">
+                    <label className="text-xs text-gray-600 mb-1">Parte 3</label>
+                    <input
+                      type="text"
+                      maxLength={3}
+                      className="p-3 border border-black rounded text-center uppercase"
+                      placeholder="12"
+                      value={patente.parte3 || ''}
+                      onChange={(e) => setPatente({ ...patente, parte3: e.target.value.toUpperCase() })}
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-col">
+                <label className="text-sm font-semibold text-gray-700">RUT</label>
+                <div className="grid grid-cols-3 gap-2 items-center">
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    placeholder="12345678"
+                    maxLength={8}
+                    className="p-3 border border-black rounded col-span-2"
+                    value={rut.cuerpo}
+                    onChange={(e) =>
+                      setRut({ ...rut, cuerpo: e.target.value.replace(/[^0-9]/g, '') })
+                    }
+                    required
+                  />
+                  <input
+                    type="text"
+                    placeholder="9 / k"
+                    maxLength={1}
+                    className="p-3 border border-black rounded text-center"
+                    value={rut.dv}
+                    onChange={(e) =>
+                      setRut({ ...rut, dv: e.target.value.replace(/[^0-9kK]/g, '').toUpperCase() })
+                    }
+                    required
+                  />
+                </div>
+              </div>
+              
               <div className="flex justify-between mt-4">
                 <button
                   type="button"
