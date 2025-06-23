@@ -1,4 +1,7 @@
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Register from './pages/Register';
+import Reserva from './pages/Reserva';
+import CancelarReservas from './pages/CancelarReservas';
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Perfil from "./pages/Perfil";
@@ -6,24 +9,16 @@ import Perfil from "./pages/Perfil";
 function App() {
   return (
     <Router>
-      <nav className="bg-blue-900 text-white p-4 flex justify-between items-center shadow-md">
-        <div className="text-xl font-semibold tracking-wide">
-          Estacionamientos Empresariales
-        </div>
-        <div className="space-x-6 text-sm">
-          <Link to="/" className="hover:underline">Inicio</Link>
-          <Link to="/login" className="hover:underline">Iniciar sesión</Link>
-          <Link to="/perfil" className="hover:underline">Perfil</Link>
-        </div>
-      </nav>
-
       <Routes>
+        <Route path="Register" element={<Register />} />
+        <Route path="/Reserva" element={<Reserva />} />
+        <Route path="/cancelar" element={<CancelarReservas />} />
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/perfil" element={<Perfil />} />
       </Routes>
     </Router>
-  );
+  )
 }
 
 export default App;
