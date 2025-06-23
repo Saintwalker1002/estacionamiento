@@ -25,6 +25,9 @@ function NavBar() {
         <Link to="/cancelar" className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-md transition">
           Cancelar Reserva 
         </Link>
+        <Link to="/Perfil" className="bg-purple-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-md transition">
+          Perfil 
+        </Link>
       </div>
     </nav>
   );
