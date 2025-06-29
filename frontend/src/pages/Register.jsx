@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import HeaderLog from '../component/NavLog';
+import axios from 'axios';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -13,31 +14,31 @@ const Register = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [correo, setCorreo] = useState('');
+  const [telefono, setTelefono] = useState('+569');
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
 
-    if (password !== confirmPassword) {
-      setError('Las contraseñas no coinciden.');
-      return;
+    try {
+      const res = await axios.post('http://localhost:3000/api/register', {
+        nombre,
+        apellidos,
+        rut,
+        correo,
+        telefono,
+        patente,
+        birthdate,
+        password,
+      });
+
+      if (res.status === 201) {
+        localStorage.setItem('usuario', JSON.stringify(res.data.usuario));
+        navigate('/reserva');
+      }
+    } catch (err) {
+      setError('Error al registrar usuario.');
     }
-
-    const patenteCompleta = `${patente.parte1}${patente.parte2}${patente.parte3}`;
-    const email = `${rut}@example.cl`;
-
-    const success = register(nombre, apellidos, rut, patenteCompleta, birthdate, password);
-
-    if (success) {
-      navigate('/');
-    } else {
-      setError('El RUT ya está registrado.');
-    }
-  };
-
-  const register = (nombre, apellidos, rut, patente, birthdate, password) => {
-    // Simulación básica
-    if (rut === '11111111-1') return false;
-    return true;
   };
 
   return (
@@ -76,6 +77,26 @@ const Register = () => {
               className="p-3 border border-black rounded"
               value={rut}
               onChange={(e) => setRut(e.target.value)}
+              required
+            />
+
+            <label className="text-sm font-semibold text-gray-700">Correo electrónico</label>
+            <input
+              type="email"
+              className="p-3 border border-black rounded"
+              value={correo}
+              onChange={(e) => setCorreo(e.target.value)}
+              required
+            />
+
+            <label className="text-sm font-semibold text-gray-700">Teléfono</label>
+            <input
+              type="tel"
+              className="p-3 border border-black rounded"
+              value={telefono}
+              onChange={(e) => setTelefono(e.target.value)}
+              pattern="^\+569\d{8}$"
+              title="Debe comenzar con +569 y tener 8 dígitos después"
               required
             />
 
