@@ -13,7 +13,7 @@ function Home() {
 
     axios.get('http://localhost:3000/api/reservas')
       .then(res => {
-        const reservasHoy = res.data.filter(r => r.fecha === hoy);
+        const reservasHoy = res.data.filter(r => r.fecha === hoy); // Este es el filtro que mencionaste
         setReservas(reservasHoy);
       })
       .catch(err => console.error('Error al obtener reservas:', err));

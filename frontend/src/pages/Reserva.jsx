@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Header from '../component/NavBar';
+import axios from 'axios';
 
 const totalEspacios = 12;
 
@@ -13,8 +14,9 @@ const Reserva = () => {
   const [errorTiempo, setErrorTiempo] = useState('');
   const [patente, setPatente] = useState({ parte1: '', parte2: '', parte3: '' });
   const [rut, setRut] = useState({ cuerpo: '', dv: '' });
+  const [reservasMismoDia, setReservasMismoDia] = useState([]);
 
-  // Obtener reservas del backend al cargar
+  // Obtener reservas al cargar
   useEffect(() => {
     const fetchReservas = async () => {
       try {
@@ -50,7 +52,25 @@ const Reserva = () => {
     setRut({ cuerpo: '', dv: '' });
     setBirthdate('');
     setErrorTiempo('');
+    setReservasMismoDia([]);
   };
+
+  // Actualizar reservas del mismo día cada vez que cambia la fecha
+  useEffect(() => {
+    if (!birthdate) return;
+
+    const fetchMismoDia = async () => {
+      try {
+        const res = await axios.get('http://localhost:3000/api/reservas');
+        const reservasFiltradas = res.data.filter(r => r.fecha === birthdate);
+        setReservasMismoDia(reservasFiltradas);
+      } catch (err) {
+        console.error('Error al obtener reservas del mismo día:', err);
+      }
+    };
+
+    fetchMismoDia();
+  }, [birthdate]);
 
   const manejarReserva = async (e) => {
     e.preventDefault();
@@ -152,7 +172,6 @@ const Reserva = () => {
           <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-md">
             <h2 className="text-2xl font-bold mb-4 text-blue-800 text-center">Reservar Espacio #{espacioSeleccionado}</h2>
             <form onSubmit={manejarReserva} className="grid gap-4">
-
               <div>
                 <label className="text-sm font-semibold text-gray-700 mb-1">Fecha de reserva</label>
                 <input
@@ -177,7 +196,6 @@ const Reserva = () => {
                 {errorTiempo && <p className="text-red-600 text-sm">{errorTiempo}</p>}
               </div>
 
-              {/* Patente */}
               <div>
                 <label className="text-sm font-semibold text-gray-700">Patente</label>
                 <div className="grid grid-cols-3 gap-2">
@@ -196,7 +214,6 @@ const Reserva = () => {
                 </div>
               </div>
 
-              {/* RUT */}
               <div>
                 <label className="text-sm font-semibold text-gray-700">RUT</label>
                 <div className="grid grid-cols-3 gap-2 items-center">
@@ -223,12 +240,33 @@ const Reserva = () => {
               </div>
 
               <div className="flex justify-between mt-4">
-                <button type="button" onClick={cerrarModal}
-                  className="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded transition">Cancelar</button>
-                <button type="submit"
-                  className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition">Confirmar Reserva</button>
+                <button
+                  type="button"
+                  onClick={cerrarModal}
+                  className="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded transition"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition"
+                >
+                  Confirmar Reserva
+                </button>
               </div>
             </form>
+
+            {/* Mostrar reservas de otros usuarios para esa fecha */}
+            {reservasMismoDia.length > 0 && (
+              <div className="mt-6">
+                <h3 className="text-lg font-bold text-gray-800 mb-2">Reservas de otros usuarios para el {birthdate}</h3>
+                <ul className="max-h-40 overflow-y-auto text-sm text-gray-700 space-y-1">
+                  {reservasMismoDia.map((r, i) => (
+                    <li key={i}>• Espacio #{r.espacioId} — {r.hora}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -237,4 +275,3 @@ const Reserva = () => {
 };
 
 export default Reserva;
-
