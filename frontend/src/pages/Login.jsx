@@ -2,9 +2,12 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import HeaderLog from '../component/NavLog';
+import { useUser } from '../context/UserContext'; // AJUSTA RUTA
 
 const Login = () => {
   const navigate = useNavigate();
+  const { login } = useUser();
+
   const [rut, setRut] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -20,7 +23,7 @@ const Login = () => {
 
       if (res.status === 200) {
         const userData = res.data.usuario;
-        localStorage.setItem('usuario', JSON.stringify(userData)); // ← Aquí guardamos los datos
+        login(userData); // Actualiza contexto y localStorage
         navigate('/reserva');
       }
     } catch (err) {
@@ -31,7 +34,6 @@ const Login = () => {
       );
     }
   };
-
 
   return (
     <div className="min-h-screen bg-blue-100">
@@ -79,4 +81,3 @@ const Login = () => {
 };
 
 export default Login;
-

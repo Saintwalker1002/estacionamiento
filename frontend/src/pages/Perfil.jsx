@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Header from '../component/NavBar';
+import { useUser } from '../context/UserContext'; // AJUSTA RUTA
 
 const Perfil = () => {
+  const { usuario } = useUser();
   const [reservas, setReservas] = useState([]);
   const [loading, setLoading] = useState(true);
-  
-  const usuario = JSON.parse(localStorage.getItem('usuario'));
 
   const nombre = usuario?.nombre || '';
   const apellidos = usuario?.apellidos || '';
@@ -38,24 +38,25 @@ const Perfil = () => {
   };
 
   useEffect(() => {
-    fetchReservas();
-  }, []);
+    if (usuario) {
+      fetchReservas();
+    }
+  }, [usuario]);
 
   return (
     <div className="min-h-screen bg-red-100">
       <Header />
       <div className="max-w-6xl mx-auto p-8 flex flex-col gap-6 md:flex-row">
-        {/* Contenedor de datos del usuario (ejemplo en blanco por ahora) */}
+        {/* Contenedor de datos del usuario */}
         <div className="flex-1 bg-white border border-blue-600 shadow-md rounded-lg p-6">
           <h2 className="text-2xl font-bold text-blue-600 mb-4">Tus Datos</h2>
           <p><strong>Nombre:</strong> {nombre} {apellidos}</p>
           <p><strong>RUT:</strong> {rut}</p>
           <p><strong>Correo:</strong> {correo}</p>
           <p><strong>Teléfono:</strong> {telefono}</p>
-          <p><strong>Patente:</strong> {patente}</p>
+          <p><strong>Patente:</strong> {patente?.parte1}{patente?.parte2}{patente?.parte3}</p>
           <p><strong>Fecha de nacimiento:</strong> {nacimiento}</p>
         </div>
-
 
         {/* Contenedor de cancelar reservas */}
         <div className="flex-1 bg-white border border-blue-600 shadow-md rounded-lg p-6">
@@ -95,4 +96,3 @@ const Perfil = () => {
 };
 
 export default Perfil;
-

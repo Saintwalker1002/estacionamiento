@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import HeaderLog from '../component/NavLog';
 import axios from 'axios';
+import { useUser } from '../context/UserContext'; // AJUSTA RUTA
 
 const Register = () => {
   const navigate = useNavigate();
+  const { login } = useUser();
 
   const [nombre, setNombre] = useState('');
   const [apellidos, setApellidos] = useState('');
@@ -20,6 +22,8 @@ const Register = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
 
+    // Aquí podrías validar password === confirmPassword, opcional
+
     try {
       const res = await axios.post('http://localhost:3000/api/register', {
         nombre,
@@ -33,7 +37,7 @@ const Register = () => {
       });
 
       if (res.status === 201) {
-        localStorage.setItem('usuario', JSON.stringify(res.data.usuario));
+        login(res.data.usuario); // Guarda usuario en contexto y localStorage
         navigate('/reserva');
       }
     } catch (err) {
