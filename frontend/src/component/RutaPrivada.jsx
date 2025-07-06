@@ -1,5 +1,5 @@
 import { Navigate } from 'react-router-dom';
-import { useUser } from '../context/UserContext'; // AJUSTA RUTA SI ES NECESARIO
+import { useUser } from '../context/UserContext';
 
 const RutaPrivada = ({ children }) => {
   const { usuario } = useUser();

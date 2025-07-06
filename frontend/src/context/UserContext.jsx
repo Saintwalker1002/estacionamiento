@@ -1,33 +1,25 @@
-// UserContext.jsx
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const UserContext = createContext();
-
 export const useUser = () => useContext(UserContext);
 
 export const UserProvider = ({ children }) => {
-  // Inicializamos con lo que haya en localStorage (o null)
-  const [usuario, setUsuario] = useState(() => {
-    const userStorage = localStorage.getItem('usuario');
-    return userStorage ? JSON.parse(userStorage) : null;
-  });
+  const [usuario, setUsuario] = useState(null);
 
-  // Cuando usuario cambie, sincronizamos con localStorage
   useEffect(() => {
-    if (usuario) {
-      localStorage.setItem('usuario', JSON.stringify(usuario));
-    } else {
-      localStorage.removeItem('usuario');
+    const usuarioGuardado = localStorage.getItem('usuario');
+    if (usuarioGuardado) {
+      setUsuario(JSON.parse(usuarioGuardado));
     }
-  }, [usuario]);
+  }, []);
 
-  // Función para hacer login (guardar usuario)
-  const login = (userData) => {
-    setUsuario(userData);
+  const login = (usuarioData) => {
+    localStorage.setItem('usuario', JSON.stringify(usuarioData));
+    setUsuario(usuarioData);
   };
 
-  // Función para logout (borrar usuario)
   const logout = () => {
+    localStorage.removeItem('usuario');
     setUsuario(null);
   };
 

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import HeaderLog from '../component/NavLog';
-import { useUser } from '../context/UserContext'; // AJUSTA RUTA
+import { useUser } from '../context/UserContext';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -22,8 +22,7 @@ const Login = () => {
       });
 
       if (res.status === 200) {
-        const userData = res.data.usuario;
-        login(userData); // Actualiza contexto y localStorage
+        login(res.data.usuario);
         navigate('/reserva');
       }
     } catch (err) {
@@ -40,7 +39,6 @@ const Login = () => {
       <header>
         <HeaderLog />
       </header>
-
       <main className="flex items-center justify-center py-10 px-4">
         <div className="bg-white border-4 border-blue-500 p-10 rounded-lg shadow-xl w-full max-w-md grid gap-6">
           <h1 className="text-3xl font-bold text-center text-blue-800">Iniciar Sesión</h1>
@@ -55,7 +53,6 @@ const Login = () => {
               onChange={(e) => setRut(e.target.value)}
               required
             />
-
             <label className="text-sm font-semibold text-gray-700">Contraseña</label>
             <input
               type="password"
@@ -64,7 +61,6 @@ const Login = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-
             {error && <p className="text-red-600 text-sm">{error}</p>}
 
             <button

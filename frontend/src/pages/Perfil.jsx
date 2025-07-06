@@ -1,25 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Header from '../component/NavBar';
-import { useUser } from '../context/UserContext'; // AJUSTA RUTA
+import { useUser } from '../context/UserContext';
 
 const Perfil = () => {
   const { usuario } = useUser();
   const [reservas, setReservas] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const nombre = usuario?.nombre || '';
-  const apellidos = usuario?.apellidos || '';
-  const rut = usuario?.rut || '';
-  const patente = usuario?.patente || '';
-  const nacimiento = usuario?.birthdate || '';
-  const correo = usuario?.correo || '';
-  const telefono = usuario?.telefono;
-
   const fetchReservas = async () => {
     try {
       const res = await axios.get('http://localhost:3000/api/reservas');
-      const reservasUsuario = res.data.filter((r) => `${r.rut?.cuerpo}-${r.rut?.dv}` === rut);
+      const reservasUsuario = res.data.filter(
+        (r) => `${r.rut?.cuerpo}-${r.rut?.dv}` === usuario?.rut
+      );
       setReservas(reservasUsuario);
     } catch (err) {
       console.error('Error al obtener las reservas:', err);
@@ -47,18 +41,16 @@ const Perfil = () => {
     <div className="min-h-screen bg-red-100">
       <Header />
       <div className="max-w-6xl mx-auto p-8 flex flex-col gap-6 md:flex-row">
-        {/* Contenedor de datos del usuario */}
         <div className="flex-1 bg-white border border-blue-600 shadow-md rounded-lg p-6">
           <h2 className="text-2xl font-bold text-blue-600 mb-4">Tus Datos</h2>
-          <p><strong>Nombre:</strong> {nombre} {apellidos}</p>
-          <p><strong>RUT:</strong> {rut}</p>
-          <p><strong>Correo:</strong> {correo}</p>
-          <p><strong>Teléfono:</strong> {telefono}</p>
-          <p><strong>Patente:</strong> {patente?.parte1}{patente?.parte2}{patente?.parte3}</p>
-          <p><strong>Fecha de nacimiento:</strong> {nacimiento}</p>
+          <p><strong>Nombre:</strong> {usuario?.nombre} {usuario?.apellidos}</p>
+          <p><strong>RUT:</strong> {usuario?.rut}</p>
+          <p><strong>Correo:</strong> {usuario?.correo}</p>
+          <p><strong>Teléfono:</strong> {usuario?.telefono}</p>
+          <p><strong>Patente:</strong> {usuario?.patente?.parte1}{usuario?.patente?.parte2}{usuario?.patente?.parte3}</p>
+          <p><strong>Fecha de nacimiento:</strong> {usuario?.birthdate}</p>
         </div>
 
-        {/* Contenedor de cancelar reservas */}
         <div className="flex-1 bg-white border border-blue-600 shadow-md rounded-lg p-6">
           <h1 className="text-2xl font-bold text-red-600 text-center mb-4">Cancelar Reservas</h1>
 
