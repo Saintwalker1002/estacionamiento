@@ -12,18 +12,19 @@ Esta aplicación web permite a los usuarios registrarse, iniciar sesión y reser
 
    - Asegúrate de tener MongoDB corriendo en tu máquina.
    - Desde la carpeta `backend`, ejecuta:
-     
+   
+   ```
    npm install
    node index.js
-
-El servidor correrá en: http://localhost:3000
+- El servidor correrá en: http://localhost:3000
 
 2. **Iniciar el frontend**
 
-Desde la carpeta frontend, ejecuta:
+   - Desde la carpeta `frontend`, ejecuta:
 
-npm install
-npm start
+   ```
+   npm install
+   npm start
 El frontend correrá en: http://localhost:3001 (o el puerto que configure React)
 
 3. **Abrir la aplicación**
